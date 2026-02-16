@@ -1,0 +1,109 @@
+thuylam
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Flowering Tree</title>
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:wheat;
+}
+canvas{
+    display:block;
+}
+.text{
+    position:absolute;
+    top:40%;
+    width:100%;
+    text-align:center;
+    font-size:60px;
+    font-weight:bold;
+    color:white;
+    text-shadow:0 0 15px pink, 0 0 30px red;
+    font-family:cursive;
+}
+</style>
+</head>
+<body>
+
+<div class="text">Thuỳ Lâm</div>
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stack = [];
+
+function initTree(){
+    stack.push({
+        x: canvas.width/2,
+        y: canvas.height,
+        length: 90,
+        angle: Math.PI/2
+    });
+}
+
+function drawPetal(x,y){
+    ctx.fillStyle = Math.random()>0.5?"snow":"lightcoral";
+    ctx.beginPath();
+    ctx.arc(x,y,Math.random()*4+1,0,Math.PI*2);
+    ctx.fill();
+}
+
+function drawStep(){
+    if(stack.length === 0){
+        return;
+    }
+
+    const branch = stack.pop();
+    const {x,y,length,angle} = branch;
+
+    if(length < 6){
+        drawPetal(x,y);
+        requestAnimationFrame(drawStep);
+        return;
+    }
+
+    const x2 = x + length * Math.cos(angle);
+    const y2 = y - length * Math.sin(angle);
+
+    ctx.strokeStyle = length < 15 ? "lightcoral" : "sienna";
+    ctx.lineWidth = length / 10;
+
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+
+    const randomAngle = (Math.random()*25+10)*Math.PI/180;
+    const randomLength = Math.random()*12;
+
+    stack.push({
+        x:x2,
+        y:y2,
+        length:length-randomLength,
+        angle:angle-randomAngle
+    });
+
+    stack.push({
+        x:x2,
+        y:y2,
+        length:length-randomLength,
+        angle:angle+randomAngle
+    });
+
+    requestAnimationFrame(drawStep);
+}
+
+initTree();
+drawStep();
+</script>
+
+</body>
+</html>
